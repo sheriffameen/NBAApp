@@ -1,4 +1,4 @@
-package com.example.nbarosterapp.PlayerModel;
+package com.example.nbarosterapp.playerModel;
 
 public class Player {
     private String firstName;

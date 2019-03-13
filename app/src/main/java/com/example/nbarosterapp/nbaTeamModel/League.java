@@ -1,11 +1,12 @@
 package com.example.nbarosterapp.nbaTeamModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class League {
-    private List<NBATeam> vegas;
+    private ArrayList<NBATeam> vegas;
 
-    public List<NBATeam> getVegas() {
+    public ArrayList<NBATeam> getVegas() {
         return vegas;
     }
 }
