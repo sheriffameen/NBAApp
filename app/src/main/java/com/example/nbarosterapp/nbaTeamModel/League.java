@@ -1,4 +1,4 @@
-package com.example.nbarosterapp.NBATeamModel;
+package com.example.nbarosterapp.nbaTeamModel;
 
 import java.util.List;
 
