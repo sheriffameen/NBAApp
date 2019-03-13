@@ -1,4 +1,4 @@
-package com.example.nbarosterapp.NBATeamModel;
+package com.example.nbarosterapp.nbaTeamModel;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,4 +1,4 @@
-package com.example.nbarosterapp.NBATeamViewholder;
+package com.example.nbarosterapp.nbaTeamViewholder;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.nbarosterapp.R;
-import com.example.nbarosterapp.NBATeamModel.NBATeam;
+import com.example.nbarosterapp.nbaTeamModel.NBATeam;
 import com.example.nbarosterapp.navigator.NBANavigator;
 
 public class NBAViewHolder extends RecyclerView.ViewHolder{
@@ -22,7 +22,7 @@ public class NBAViewHolder extends RecyclerView.ViewHolder{
         fullNameTextView = itemView.findViewById(R.id.fullName_textView);
     }
 
-    public void onBind(NBATeam nbaTeam, final NBANavigator nbaNavigator){
+    public void onBind(final NBATeam nbaTeam, final NBANavigator nbaNavigator){
         Log.d(TAG,nbaTeam.getFullName());
         fullNameTextView.setText(nbaTeam.getFullName());
 
@@ -31,8 +31,9 @@ public class NBAViewHolder extends RecyclerView.ViewHolder{
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nbaNavigator.toRosterFragment(urlName);
+                Log.d(TAG,nbaTeam.getUrlName());
 
+                nbaNavigator.toRosterFragment(urlName);
             }
         });
     }
