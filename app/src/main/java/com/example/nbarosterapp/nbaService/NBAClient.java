@@ -1,8 +1,8 @@
-package com.example.nbarosterapp.nbaTeamService;
+package com.example.nbarosterapp.nbaService;
 
 import com.example.nbarosterapp.nbaTeamModel.TeamResponse;
-import com.example.nbarosterapp.PlayerModel.PlayerResponse;
-import com.example.nbarosterapp.RosterModel.RosterResponse;
+import com.example.nbarosterapp.playerModel.PlayerResponse;
+import com.example.nbarosterapp.rosterModel.RosterResponse;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;

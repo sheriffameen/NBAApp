@@ -1,7 +1,6 @@
 package com.example.nbarosterapp.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,10 +13,11 @@ import android.view.ViewGroup;
 import com.example.nbarosterapp.nbaTeamAdapter.NBAAdapter;
 import com.example.nbarosterapp.nbaTeamModel.NBATeam;
 import com.example.nbarosterapp.nbaTeamModel.TeamResponse;
-import com.example.nbarosterapp.nbaTeamService.NBAClient;
+import com.example.nbarosterapp.nbaService.NBAClient;
 import com.example.nbarosterapp.R;
 import com.example.nbarosterapp.navigator.NBANavigator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -73,11 +73,11 @@ public class TeamsRecyclerFragment extends Fragment implements Callback<TeamResp
         TeamResponse teamResponse = response.body();
         if (teamResponse == null) return;
 
-        List<NBATeam> nbaTeams = teamResponse.getLeague().getVegas();
+        ArrayList<NBATeam> nbaTeams = teamResponse.getLeague().getVegas();
 
-        for (NBATeam s : nbaTeams) {
-            Log.d(TAG, s.getFullName());
-        }
+//        for (NBATeam s : nbaTeams) {
+//            Log.d(TAG, s.getFullName());
+//        }
         nbaAdapter = new NBAAdapter(nbaTeams,nbaNavigator);
         recyclerView.setAdapter(nbaAdapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(rootView.getContext(),3);

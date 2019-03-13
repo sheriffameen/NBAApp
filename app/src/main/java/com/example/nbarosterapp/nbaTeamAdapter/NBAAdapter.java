@@ -11,13 +11,15 @@ import com.example.nbarosterapp.R;
 import com.example.nbarosterapp.nbaTeamModel.NBATeam;
 import com.example.nbarosterapp.navigator.NBANavigator;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class NBAAdapter extends RecyclerView.Adapter<NBAViewHolder> {
-    private List<NBATeam> nbaTeams;
+    private ArrayList<NBATeam> nbaTeams;
     private NBANavigator nbaNavigator;
 
-    public NBAAdapter(List<NBATeam> nbaTeams, NBANavigator nbaNavigator) {
+    public NBAAdapter(ArrayList<NBATeam> nbaTeams, NBANavigator nbaNavigator) {
         this.nbaTeams = nbaTeams;
         this.nbaNavigator = nbaNavigator;
     }
@@ -32,7 +34,7 @@ public class NBAAdapter extends RecyclerView.Adapter<NBAViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull NBAViewHolder nbaViewHolder, int i) {
         NBATeam nbaTeam = nbaTeams.get(i);
-        nbaViewHolder.onBind(nbaTeam,nbaNavigator);
+        nbaViewHolder.onBind(nbaTeam,nbaNavigator, nbaTeams);
 
     }
 

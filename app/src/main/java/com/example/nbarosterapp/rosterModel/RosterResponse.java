@@ -1,4 +1,4 @@
-package com.example.nbarosterapp.RosterModel;
+package com.example.nbarosterapp.rosterModel;
 
 //import com.example.nbarosterapp.RosterModel.Roster;
 

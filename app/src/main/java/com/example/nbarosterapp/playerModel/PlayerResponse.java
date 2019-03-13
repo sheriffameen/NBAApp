@@ -1,6 +1,4 @@
-package com.example.nbarosterapp.PlayerModel;
-
-import com.example.nbarosterapp.PlayerModel.AllPlayers;
+package com.example.nbarosterapp.playerModel;
 
 public class PlayerResponse {
     private AllPlayers league;

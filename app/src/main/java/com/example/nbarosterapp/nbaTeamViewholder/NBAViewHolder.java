@@ -10,6 +10,9 @@ import com.example.nbarosterapp.R;
 import com.example.nbarosterapp.nbaTeamModel.NBATeam;
 import com.example.nbarosterapp.navigator.NBANavigator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NBAViewHolder extends RecyclerView.ViewHolder{
     private static final String TAG = "Sheriff";
     private TextView fullNameTextView;
@@ -22,7 +25,7 @@ public class NBAViewHolder extends RecyclerView.ViewHolder{
         fullNameTextView = itemView.findViewById(R.id.fullName_textView);
     }
 
-    public void onBind(final NBATeam nbaTeam, final NBANavigator nbaNavigator){
+    public void onBind(final NBATeam nbaTeam, final NBANavigator nbaNavigator, final ArrayList<NBATeam> nbaTeams){
         Log.d(TAG,nbaTeam.getFullName());
         fullNameTextView.setText(nbaTeam.getFullName());
 
@@ -33,7 +36,7 @@ public class NBAViewHolder extends RecyclerView.ViewHolder{
             public void onClick(View v) {
                 Log.d(TAG,nbaTeam.getUrlName());
 
-                nbaNavigator.toRosterFragment(urlName);
+                nbaNavigator.toRosterFragment(urlName,nbaTeams);
             }
         });
     }
