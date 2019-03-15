@@ -18,7 +18,6 @@ import com.example.nbarosterapp.R;
 import com.example.nbarosterapp.navigator.NBANavigator;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,7 +54,7 @@ public class TeamsRecyclerFragment extends Fragment implements Callback<TeamResp
         // Inflate the layout for this fragment
         rootView =  inflater.inflate(R.layout.fragment_teams_recycler, container, false);
 
-        recyclerView = rootView.findViewById(R.id.recycler_view);
+        recyclerView = rootView.findViewById(R.id.teamsRecycler_view);
 
         getNBATeams();
         return rootView;

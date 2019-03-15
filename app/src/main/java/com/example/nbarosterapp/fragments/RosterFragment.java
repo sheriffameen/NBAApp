@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +13,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.nbarosterapp.R;
+import com.example.nbarosterapp.nbaTeamAdapter.RosterAdapter;
 import com.example.nbarosterapp.nbaTeamModel.NBATeam;
+import com.example.nbarosterapp.playerModel.PlayerResponse;
 import com.example.nbarosterapp.rosterModel.PersonId;
 import com.example.nbarosterapp.rosterModel.RosterResponse;
 import com.example.nbarosterapp.nbaService.NBAClient;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +29,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class RosterFragment extends Fragment implements Callback<RosterResponse> {
+public class RosterFragment extends Fragment implements Callback<RosterResponse>{
 
     private static final String URL_NAME_TAG = "urlName key";
     private static final String TAG = "Roster";
@@ -33,6 +38,8 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
     private String urlName;
     private TextView teamNameTextView;
     private List<NBATeam> nbaTeams;
+    private RecyclerView recyclerView;
+    private RosterAdapter rosterAdapter;
 
 
     public RosterFragment() {
@@ -73,21 +80,27 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
-
         rootView =  inflater.inflate(R.layout.fragment_roster, container, false);
-
-        teamNameTextView = rootView.findViewById(R.id.roster_textView);
+        findViews();
         getRoster();
-
-
         return rootView;
+    }
+
+    private void findViews() {
+        teamNameTextView = rootView.findViewById(R.id.roster_textView);
+        recyclerView = rootView.findViewById(R.id.rosterRecycler_view);
     }
 
     private void getRoster(){
         Call<RosterResponse> rosterResponseCall = NBAClient.getInstance().getRosterResponse(urlName);
         rosterResponseCall.enqueue(this);
+    }
+
+    private void getAllPlayers(){
+        Call<PlayerResponse> playerResponseCall = NBAClient.getInstance().getPlayerResponse();
+
+        //todo:
+//        playerResponseCall.enqueue(this);
     }
 
     @Override
@@ -97,6 +110,14 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
 
         int teamIDResponse = Integer.parseInt(rosterResponse.getLeague().getVegas().getTeamId());
         List<PersonId> playersIds = rosterResponse.getLeague().getVegas().getPlayers();
+
+        rosterAdapter = new RosterAdapter(playersIds);
+        recyclerView.setAdapter(rosterAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(rootView.getContext(),LinearLayoutManager.VERTICAL,false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+
+
         for (PersonId s : playersIds) {
             Log.d(TAG, s.getPersonId());
         }

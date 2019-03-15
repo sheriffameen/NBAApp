@@ -6,14 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.nbarosterapp.nbaTeamViewholder.NBAViewHolder;
 import com.example.nbarosterapp.R;
-import com.example.nbarosterapp.nbaTeamModel.NBATeam;
 import com.example.nbarosterapp.navigator.NBANavigator;
+import com.example.nbarosterapp.nbaTeamModel.NBATeam;
+import com.example.nbarosterapp.nbaTeamViewholder.NBAViewHolder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 public class NBAAdapter extends RecyclerView.Adapter<NBAViewHolder> {
     private ArrayList<NBATeam> nbaTeams;
