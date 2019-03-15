@@ -7,11 +7,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.nbarosterapp.R;
-import com.example.nbarosterapp.nbaTeamModel.NBATeam;
 import com.example.nbarosterapp.navigator.NBANavigator;
+import com.example.nbarosterapp.nbaTeamModel.NBATeam;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class NBAViewHolder extends RecyclerView.ViewHolder{
     private static final String TAG = "Sheriff";
