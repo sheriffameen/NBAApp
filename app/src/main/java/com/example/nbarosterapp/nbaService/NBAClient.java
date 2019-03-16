@@ -4,8 +4,10 @@ import com.example.nbarosterapp.nbaTeamModel.TeamResponse;
 import com.example.nbarosterapp.playerModel.PlayerResponse;
 import com.example.nbarosterapp.rosterModel.RosterResponse;
 
+import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -28,6 +30,7 @@ public class NBAClient {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build();
         }
     }
@@ -36,7 +39,7 @@ public class NBAClient {
         return retrofit.create(NBAService.class);
     }
 
-    public Call<TeamResponse> getTeamResponse(){
+    public Single<TeamResponse> getTeamResponse(){
         return getNBAService().getNBATeams();
     }
 
