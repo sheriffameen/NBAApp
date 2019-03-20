@@ -4,6 +4,7 @@ import com.example.nbarosterapp.nbaTeamModel.TeamResponse;
 import com.example.nbarosterapp.playerModel.PlayerResponse;
 import com.example.nbarosterapp.rosterModel.RosterResponse;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -22,5 +23,5 @@ public interface NBAService {
     Call<RosterResponse> getRoster(@Path("urlName") String urlName);
 
     @GET("10s/prod/v1/2016/players.json")
-    Call<PlayerResponse> getPlayers();
+    Observable<PlayerResponse> getPlayers();
 }

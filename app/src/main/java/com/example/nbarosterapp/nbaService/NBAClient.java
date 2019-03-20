@@ -4,6 +4,7 @@ import com.example.nbarosterapp.nbaTeamModel.TeamResponse;
 import com.example.nbarosterapp.playerModel.PlayerResponse;
 import com.example.nbarosterapp.rosterModel.RosterResponse;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -48,7 +49,7 @@ public class NBAClient {
         return retrofit.create(NBAService.class);
     }
 
-    public Call<PlayerResponse> getPlayerResponse(){
+    public Observable<PlayerResponse> getPlayerResponse(){
         return getPlayerService().getPlayers();
     }
 

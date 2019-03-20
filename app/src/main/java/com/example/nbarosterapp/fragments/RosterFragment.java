@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.nbarosterapp.R;
 import com.example.nbarosterapp.nbaTeamAdapter.RosterAdapter;
@@ -23,8 +24,16 @@ import com.example.nbarosterapp.nbaService.NBAClient;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,6 +53,7 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
     private RosterAdapter rosterAdapter;
     private List<Player> players;
     private List<PersonId> playersIds;
+    private CompositeDisposable compositeDisposable;
 
 
     public RosterFragment() {
@@ -75,6 +85,7 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
             nbaTeams = getArguments().getParcelableArrayList(NBA_TEAM_KEY);
 
         }
+        compositeDisposable = new CompositeDisposable();
 
 
     }
@@ -101,33 +112,25 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
     }
 
     private void getPlayers() {
-        Call<PlayerResponse> playerResponseCall = NBAClient.getInstance().getPlayerResponse();
-        playerResponseCall.enqueue(new Callback<PlayerResponse>() {
-            @Override
-            public void onResponse(Call<PlayerResponse> call, Response<PlayerResponse> response) {
-                PlayerResponse playerResponse = response.body();
-                players = playerResponse.getLeague().getStandard();
-
-
-
-                    rosterAdapter = new RosterAdapter(playersIds, players);
+        Disposable disposable = NBAClient.getInstance()
+                .getPlayerResponse()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                //Converting the player response to a list of players
+                .map(response -> response.getLeague().getStandard())
+                .flatMapIterable(items -> items)
+                .filter(item -> item.getTeamId().equals("1610612759 1610612759"))
+                .toList()
+                .subscribe(list -> {
+                    rosterAdapter = new RosterAdapter(playersIds, list);
                     recyclerView.setAdapter(rosterAdapter);
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(rootView.getContext(), LinearLayoutManager.VERTICAL, false);
                     recyclerView.setLayoutManager(linearLayoutManager);
+                    Toast.makeText(getContext(), list.size(), Toast.LENGTH_SHORT).show();
 
+                }, error -> error.printStackTrace());
 
-
-
-
-
-            }
-
-            @Override
-            public void onFailure(Call<PlayerResponse> call, Throwable t) {
-
-
-            }
-        });
+        compositeDisposable.add(disposable);
     }
 
 
@@ -138,8 +141,6 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
 
         int teamIDResponse = Integer.parseInt(rosterResponse.getLeague().getVegas().getTeamId());
         playersIds = rosterResponse.getLeague().getVegas().getPlayers();
-
-
 
 
         for (PersonId s : playersIds) {
@@ -174,13 +175,17 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+//        compositeDisposable.dispose();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-
     }
 
 
