@@ -11,10 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.nbarosterapp.R;
 import com.example.nbarosterapp.nbaTeamAdapter.RosterAdapter;
 import com.example.nbarosterapp.nbaTeamModel.NBATeam;
+import com.example.nbarosterapp.playerModel.Player;
 import com.example.nbarosterapp.playerModel.PlayerResponse;
 import com.example.nbarosterapp.rosterModel.PersonId;
 import com.example.nbarosterapp.rosterModel.RosterResponse;
@@ -22,24 +24,36 @@ import com.example.nbarosterapp.nbaService.NBAClient;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class RosterFragment extends Fragment implements Callback<RosterResponse>{
+public class RosterFragment extends Fragment implements Callback<RosterResponse> {
 
     private static final String URL_NAME_TAG = "urlName key";
     private static final String TAG = "Roster";
     private static final String NBA_TEAM_KEY = "nba teams key";
+    private static final String PLAYERTAG = "player tag";
     private View rootView;
     private String urlName;
     private TextView teamNameTextView;
     private List<NBATeam> nbaTeams;
     private RecyclerView recyclerView;
     private RosterAdapter rosterAdapter;
+    private List<Player> players;
+    private List<PersonId> playersIds;
+    private CompositeDisposable compositeDisposable;
 
 
     public RosterFragment() {
@@ -58,7 +72,7 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
         RosterFragment fragment = new RosterFragment();
         Bundle args = new Bundle();
         args.putString(URL_NAME_TAG, urlName);
-        args.putParcelableArrayList(NBA_TEAM_KEY,nbaTeams);
+        args.putParcelableArrayList(NBA_TEAM_KEY, nbaTeams);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,18 +85,19 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
             nbaTeams = getArguments().getParcelableArrayList(NBA_TEAM_KEY);
 
         }
+        compositeDisposable = new CompositeDisposable();
 
 
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView =  inflater.inflate(R.layout.fragment_roster, container, false);
+        rootView = inflater.inflate(R.layout.fragment_roster, container, false);
         findViews();
         getRoster();
+        getPlayers();
         return rootView;
     }
 
@@ -91,31 +106,41 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
         recyclerView = rootView.findViewById(R.id.rosterRecycler_view);
     }
 
-    private void getRoster(){
+    private void getRoster() {
         Call<RosterResponse> rosterResponseCall = NBAClient.getInstance().getRosterResponse(urlName);
         rosterResponseCall.enqueue(this);
     }
 
-    private void getAllPlayers(){
-        Call<PlayerResponse> playerResponseCall = NBAClient.getInstance().getPlayerResponse();
+    private void getPlayers() {
+        Disposable disposable = NBAClient.getInstance()
+                .getPlayerResponse()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                //Converting the player response to a list of players
+                .map(response -> response.getLeague().getStandard())
+                .flatMapIterable(items -> items)
+                .filter(item -> item.getTeamId().equals("1610612759 1610612759"))
+                .toList()
+                .subscribe(list -> {
+                    rosterAdapter = new RosterAdapter(playersIds, list);
+                    recyclerView.setAdapter(rosterAdapter);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(rootView.getContext(), LinearLayoutManager.VERTICAL, false);
+                    recyclerView.setLayoutManager(linearLayoutManager);
+                    Toast.makeText(getContext(), list.size(), Toast.LENGTH_SHORT).show();
 
-        //todo:
-//        playerResponseCall.enqueue(this);
+                }, error -> error.printStackTrace());
+
+        compositeDisposable.add(disposable);
     }
+
 
     @Override
     public void onResponse(Call<RosterResponse> call, Response<RosterResponse> response) {
         RosterResponse rosterResponse = response.body();
-        Log.d(TAG,rosterResponse.toString());
+        Log.d(TAG, rosterResponse.toString());
 
         int teamIDResponse = Integer.parseInt(rosterResponse.getLeague().getVegas().getTeamId());
-        List<PersonId> playersIds = rosterResponse.getLeague().getVegas().getPlayers();
-
-        rosterAdapter = new RosterAdapter(playersIds);
-        recyclerView.setAdapter(rosterAdapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(rootView.getContext(),LinearLayoutManager.VERTICAL,false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
+        playersIds = rosterResponse.getLeague().getVegas().getPlayers();
 
 
         for (PersonId s : playersIds) {
@@ -126,7 +151,7 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
             int teamId = Integer.parseInt(nbaTeams.get(i).getTeamId());
             String teamName = (nbaTeams.get(i).getFullName());
 
-            if (teamId == teamIDResponse){
+            if (teamId == teamIDResponse) {
                 teamNameTextView.setText(teamName);
 
             }
@@ -141,31 +166,27 @@ public class RosterFragment extends Fragment implements Callback<RosterResponse>
     }
 
 
-
-
-
-
-
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
 
     }
 
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+//        compositeDisposable.dispose();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-
     }
-
 
 
 }

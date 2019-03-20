@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.nbarosterapp.R;
+import com.example.nbarosterapp.playerModel.Player;
 import com.example.nbarosterapp.rosterModel.PersonId;
 import com.example.nbarosterapp.rosterModel.Roster;
 
@@ -19,8 +20,11 @@ public class RosterViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    public void onBind(PersonId personId){
-        playerIdTextView.setText(personId.getPersonId());
+    public void onBind(PersonId personId, Player player){
+        String playerIdFromRoster = personId.getPersonId();
+
+        playerIdTextView.setText(playerIdFromRoster);
+
 
     }
 }
